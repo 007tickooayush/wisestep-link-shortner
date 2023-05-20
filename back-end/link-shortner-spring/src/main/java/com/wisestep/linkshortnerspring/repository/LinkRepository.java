@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface LinkRepository extends ReactiveMongoRepository<Links, String> {
+    @Query("{ 'rawLink': ?0 }")
     Mono<Links> findByRawLink(String rawLink);
     Mono<Links> findByShortLink(String shortLink);
 }
