@@ -42,29 +42,36 @@ public class LinkServiceImpl implements LinkService {
 
     @Override
     public Mono<LinkDto> insertShortLink(Mono<LinkDto> linkDto) {
-
+        linkShortProcessor = new LinkShortProcessor();
+        Mono<LinkDto> savedLink;
         return linkDto
                 // checking first if the provided raw link is already present in the DB
-                .map(linkProvided -> linkRepository
-                        .findAll()
-                        .map(CustomLinkMapper::mapDto)
-                        .doOnNext(l -> {
-                            if (l.getRawLink().equals(linkProvided.getRawLink())) {
-                                throw new RuntimeException("Link is Already Present");
-                            }
-                        })
-                        .then(Mono.just(linkProvided)))
-                // Flatten it back to Mono<?> from Mono<Mono<?>>
+                .map(linkProvided ->
+                        linkRepository
+                                .findByRawLink(linkProvided.getRawLink())
+                                .map(CustomLinkMapper::mapDto)
+                                .doOnNext(l -> {
+                                    if (l.getRawLink().equals(linkProvided.getRawLink())) {
+                                        OnlyLinkDto newOnlyLink = new OnlyLinkDto(linkProvided.getRawLink());
+//                                        generate new short Link
+                                        LinkDto newLink = linkShortProcessor.generateShortLink(newOnlyLink);
+
+//                                        update the DTO response for user
+                                        linkProvided.setShortLink(newLink.getShortLink());
+
+//                                        Mono.just(newLink)
+//                                                .map(CustomLinkMapper::mapOriginal)
+//                                                .map(linkRepository::save);
+//                                throw new RuntimeException("Link is generated");
+                                    }
+                                })
+                                .then(Mono.just(linkProvided)))
                 .flatMap(Function.identity())
                 .map(CustomLinkMapper::mapOriginal)
-                // insert the link if it is not present already
-                .flatMap(linkRepository::insert)
+                // update the link present in the DB
+                .flatMap(linkRepository::save)
                 .map(CustomLinkMapper::mapDto)
-                // doing error handling if the link is already present and returning
-                // an appropriate response object so that the flow does not break
-                .onErrorReturn(new LinkDto("", "", "", "", "Link Already Present"))
-                .switchIfEmpty(Mono.error(new RuntimeException("Link is Already Present")));
-
+                ;
     }
 
     @Override
