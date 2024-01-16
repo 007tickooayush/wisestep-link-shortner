@@ -9,8 +9,8 @@ export const Redirector = ({rawLink,shortLink}) => {
             // <Link to={rawLink} target="_blank">
             //     {shortLink}
             // </Link>
-            
-            <a href={'https://'+rawLink}>{shortLink}</a>
+            // <a href={'https://'+rawLink}>{shortLink}</a>
+            <a href={`https://${rawLink}`}>Go To Generated Link</a>
             :
             null
         }
