@@ -16,7 +16,8 @@ import java.time.Duration;
 
 @RestController
 @RequestMapping("/link-short/")
-@CrossOrigin(origins = {"http://localhost:3000"})
+// @CrossOrigin(origins = {"http://localhost:3000"})
+@CrossOrigin(origins = {"${app.cors}"})
 public class LinkController {
 
     private final LinkService linkService;
