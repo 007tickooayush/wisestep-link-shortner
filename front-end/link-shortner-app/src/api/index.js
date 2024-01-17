@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const url = `http://localhost:8071/link-short/`;
+export const url = `http://localhost:8071/link-short/`;
 
 export const fetchLink = async(rawLinkReq) =>{
 
