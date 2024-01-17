@@ -18,6 +18,7 @@ function App() {
 				window.open(`${url}${path}`);
 	
 				console.log('fetchByShortLink::val=',val);
+				console.log('`${url}${path}`', `${url}${path}`)
 			}).catch(err => {
 				console.error('fetchByShortLink::err=',err);
 			})

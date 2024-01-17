@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { fetchLink, insertLink, updateLink, url } from '.././api'
+import { cleanLink, fetchLink, insertLink, updateLink, url } from '.././api'
 import { Redirector } from './Redirector';
 import { Status } from './Status';
 
@@ -14,13 +14,15 @@ export const Form = () => {
 	const handleSubmitLink = (e) => {
 		e.preventDefault();
 
-		fetchLink(rawLink).then(fetch => {
+		const link = cleanLink(rawLink);
+		console.log('link :>> ', link);
+		fetchLink(link).then(fetch => {
 			if (!fetch.data) {
-				insertLink(rawLink).then(insert => {
+				insertLink(link).then(insert => {
 					console.log('inserted data')
 					setStatus('Created new Short Link')
 
-					setShortLinkAct(getCurrOrigin + insert.data.shortLink);
+					setShortLinkAct(getCurrOrigin() + '/' + insert.data.shortLink);
 					setRawLink(insert.data.rawLink);
 				})
 			} else {
@@ -28,7 +30,7 @@ export const Form = () => {
 				if (fetchStatus === 'Fresh Link generated') {
 					setStatus("Link Present Already");
 
-					setShortLinkAct(getCurrOrigin + fetch.data.shortLink);
+					setShortLinkAct(getCurrOrigin() + '/' + fetch.data.shortLink);
 					setRawLink(fetch.data.rawLink);
 				} else if (fetchStatus === 'Link has expired') {
 					setStatus("Link Expired, Click on Update to genereate new Short Link");
@@ -43,13 +45,14 @@ export const Form = () => {
 
 	const handleUpdate = (e) => {
 
-		fetchLink(rawLink).then(fetch => {
+		const link = cleanLink(rawLink);
+		fetchLink(link).then(fetch => {
 			if (fetch.data) {
 				setStatus('Short Link Updated');
-				updateLink(rawLink).then(updateResp => {
+				updateLink(link).then(updateResp => {
 
 					console.log(updateResp.data);
-					setShortLinkAct(getCurrOrigin + updateResp.data.shortLink);
+					setShortLinkAct(getCurrOrigin() + '/' + updateResp.data.shortLink);
 					setRawLink(updateResp.data.rawLink);
 				})
 					.catch(err => {

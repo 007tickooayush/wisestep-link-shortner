@@ -26,3 +26,8 @@ export const fetchByShortLink = (shortLinkParam) => {
 
 	return axios.get(myUrl, { params: { link: shortLinkParam }, headers: { 'Content-type': 'application/json' } });
 }
+
+export const cleanLink = (link) => {
+	const newLinks = link.replace(/(http\/\/)|(https\/\/)|(https:\/\/)|(http:\/\/)/i, "");
+	return newLinks;
+}
