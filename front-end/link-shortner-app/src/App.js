@@ -2,15 +2,18 @@ import logo from './logo.svg'
 import './App.css'
 import React, { useState, useEffect } from 'react'
 import { Form } from './components/Form';
+import { url } from './api';
+import { Route, Routes } from 'react-router-dom';
 
 function App () {
 
 
   return (
-    <div>
+    <Routes>
       {/* <a href={rawLink? 'https://'+rawLink:'blank'}> */}
-      <Form  />
-    </div>
+      {/* <Route path="/:shortLink" element={<Redirector />} /> */}
+      <Route path="/" element={<Form />} />
+    </Routes>
   )
   // return (
   //   <div className="App">
