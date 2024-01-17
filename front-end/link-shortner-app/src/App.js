@@ -1,18 +1,36 @@
-import logo from './logo.svg'
 import './App.css'
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Form } from './components/Form';
-import { url } from './api';
-import { Route, Routes } from 'react-router-dom';
+import { fetchByShortLink, url } from './api';
+import { Route, Routes, useLocation } from 'react-router-dom';
+import NotFound from './components/NotFound';
 
 function App() {
 
+	const location = useLocation();
+
+	useEffect(() => {
+		const path = location.pathname.slice(1);
+		// window.open(`${url}${path}`);
+		if(path !== ''){
+			fetchByShortLink(path).then((val) => {
+				
+				window.open(`${url}${path}`);
+	
+				console.log('fetchByShortLink::val=',val);
+			}).catch(err => {
+				console.error('fetchByShortLink::err=',err);
+			})
+			console.log('useLocation:',location.pathname.slice(1));
+		}
+	},[location]);
 
 	return (
 		<Routes>
 			{/* <a href={rawLink? 'https://'+rawLink:'blank'}> */}
 			{/* <Route path="/:shortLink" element={<Redirector />} /> */}
 			<Route path="/" element={<Form />} />
+			<Route path='*' element={<NotFound />}/>
 		</Routes>
 	)
 	// return (
